@@ -38,7 +38,7 @@ contract MonieToken is ERC20 {
     {
         address sender = msg.sender;
         uint256 current_locked = lock.check_lock(sender).current_locked;
-        if (block.timestamp <= 1725174000 && current_locked > 0) {
+        if (block.timestamp <= 1761980400 && current_locked > 0) {
             uint256 balance = balanceOf(sender);
             require(balance - amount >= current_locked);
         }
