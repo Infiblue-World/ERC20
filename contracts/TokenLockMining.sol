@@ -53,18 +53,7 @@ contract TokenLockMining {
         return balance;
     }
 
-    // function getReleaseAmount(uint256 _currentTime) internal returns (uint256) {
-    //     uint256 elapsedTime = _currentTime - lastReleaseTime; 
-    //     uint256 halfCount = elapsedTime /halfeIntervals;
-    //     uint256 releaseAmount;
-    //     for (uint i = 0; i <halfCount-1; i++) {
-    //         releaseAmount=halfeIntervals/1 hours * lastReleasePace;
-    //         lastReleasePace/=2;
-    //         lastReleaseTime+=halfeIntervals/1 seconds;
-    //     }
-    //     releaseAmount = (_currentTime-lastReleaseTime)/1 hours * lastReleasePace;
-    //     return releaseAmount;
-    // }
+
 
     function getReleaseAmount(uint256 _currentTime) internal returns (uint256) {
         uint256 halfDate=startTime;
