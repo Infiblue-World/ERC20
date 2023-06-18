@@ -12,7 +12,7 @@ contract TokenLockMining {
 
     uint256 public startTime;
     uint256 public releasedTotal;
-    uint256 public constant halfeIntervals = 1 hours;//730 days; 
+    uint256 public constant halfeIntervals = 730 days; // half every 2 years
     uint256 public constant initialReleasePace = 1000;
 
     uint256 public lastReleasePace; 
