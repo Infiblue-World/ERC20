@@ -12,7 +12,7 @@ contract TokenLockMining {
 
     uint256 public startTime;
     uint256 public releasedTotal;
-    uint256 public constant halfeIntervals = 730 days; // half every 2 years
+    uint256 public constant halfeIntervals = 730 days; //halves every 24 months
     uint256 public constant initialReleasePace = 1000;
 
     uint256 public lastReleasePace; 
@@ -54,37 +54,41 @@ contract TokenLockMining {
     }
 
 
-
-    function getReleaseAmount(uint256 _currentTime) internal returns (uint256) {
+    function getReleaseAmount(uint256 _currentTime) view internal returns (uint256,uint256) {
         uint256 halfDate=startTime;
         uint256 releaseAmount;
         uint256 elapsedTime;
+        uint256 pseudoLastRelasePace = lastReleasePace;
+        uint256 pseudoLastReleaseTime = lastReleaseTime;
         while (halfDate<_currentTime) {
-            if (halfDate>lastReleaseTime){
-                elapsedTime = (halfDate - lastReleaseTime)/1 hours;
-                releaseAmount += elapsedTime * lastReleasePace;  
-                lastReleaseTime = halfDate;
-                lastReleasePace /=2;
+            if (halfDate>pseudoLastReleaseTime){
+                elapsedTime = (halfDate - pseudoLastReleaseTime)/1 hours;  //release every hour
+                releaseAmount += elapsedTime * pseudoLastRelasePace;  
+                pseudoLastReleaseTime = halfDate;
+                pseudoLastRelasePace /=2;
             }
             halfDate +=halfeIntervals/1 seconds;
         }
-        elapsedTime = _currentTime - lastReleaseTime;
-        releaseAmount += elapsedTime/1 hours * lastReleasePace;
-        lastReleaseTime = _currentTime;
-        return releaseAmount;
+        elapsedTime = _currentTime - pseudoLastReleaseTime;
+        releaseAmount += elapsedTime/1 hours * pseudoLastRelasePace;
+        return (releaseAmount, pseudoLastRelasePace);
     }
-
+// withdraw all relased token
     function withdrawToken() external onlyManager {
         uint256 balance = getCurrentBalance();
         require(balance>0,"all tokens released.");
 
         uint256 currentTime= block.timestamp;
-        uint256 releaseAmount = getReleaseAmount(currentTime);
+        uint256 releaseAmount;
+        uint256 pseudoLastRelasePace;
+        (releaseAmount,pseudoLastRelasePace) = getReleaseAmount(currentTime);
 
         require (balance >= releaseAmount, "not enough balance.");
 
         token.transfer(manager,releaseAmount);
         releasedTotal+=releaseAmount;
+        lastReleaseTime = currentTime;
+        lastReleasePace=pseudoLastRelasePace;
 
     }
 
