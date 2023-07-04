@@ -15,6 +15,8 @@ contract TokenLockTeam {
     uint256 public constant ReleasePace = 8333333;  //monthly release pace
 
     uint256 public lastReleaseTime;
+
+    event changeManager(uint256 indexed time, address manager);
     
 
     modifier onlyOwner() {
@@ -36,6 +38,7 @@ contract TokenLockTeam {
 
     function assignManager(address _manager) external onlyOwner {
         manager = _manager;
+        emit changeManager(block.timestamp, _manager);
     }
 
 
@@ -60,6 +63,7 @@ contract TokenLockTeam {
         require(balance>0,"all tokens released.");
 
         uint256 currentTime= block.timestamp;
+        require( currentTime>= startTime, "The release of the token has not started yet.");
         uint256 releaseAmount = getReleaseAmount(currentTime);
         if (balance< releaseAmount){
             releaseAmount=balance;
