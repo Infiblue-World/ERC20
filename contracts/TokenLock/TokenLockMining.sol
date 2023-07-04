@@ -17,6 +17,8 @@ contract TokenLockMining {
 
     uint256 public lastReleasePace; 
     uint256 public lastReleaseTime;
+
+    event changeManager(uint256 indexed time, address manager);
     
 
     modifier onlyOwner() {
@@ -39,9 +41,11 @@ contract TokenLockMining {
 
     function assignManager(address _manager) external onlyOwner {
         manager = _manager;
+        emit changeManager(block.timestamp, _manager);
     }
 
     function getCurrentPace() view public returns (uint256) {
+        require (block.timestamp >=startTime,"The release of the token has not started yet.");
         uint256 elapsedTime = block.timestamp - startTime; 
         uint256 yearsPassed = elapsedTime/halfeIntervals;
         uint256 releasePace = initialReleasePace >> yearsPassed;
@@ -79,6 +83,7 @@ contract TokenLockMining {
         require(balance>0,"all tokens released.");
 
         uint256 currentTime= block.timestamp;
+        require( currentTime>= startTime, "The release of the token has not started yet.");
         uint256 releaseAmount;
         uint256 pseudoLastRelasePace;
         (releaseAmount,pseudoLastRelasePace) = getReleaseAmount(currentTime);
