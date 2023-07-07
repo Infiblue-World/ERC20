@@ -13,6 +13,7 @@ contract TokenLockMining {
     uint256 public startTime;
     uint256 public releasedTotal;
     uint256 public constant halfeIntervals = 730 days; //halves every 24 months
+    uint256 public constant DECIMAL_FACTOR = 1000; // reserve 3 digits of decimals
     uint256 public constant initialReleasePace = 1000;
 
     uint256 public lastReleasePace; 
@@ -20,7 +21,6 @@ contract TokenLockMining {
 
     event changeManager(uint256 indexed time, address manager);
     
-
     modifier onlyOwner() {
         require(msg.sender == owner, "Only contract owner can call this function.");
         _;
@@ -48,7 +48,9 @@ contract TokenLockMining {
         require (block.timestamp >=startTime,"The release of the token has not started yet.");
         uint256 elapsedTime = block.timestamp - startTime; 
         uint256 yearsPassed = elapsedTime/halfeIntervals;
-        uint256 releasePace = initialReleasePace >> yearsPassed;
+        uint256 releasePace = initialReleasePace * DECIMAL_FACTOR;
+        releasePace >> yearsPassed;
+        releasePace/=DECIMAL_FACTOR;
         return releasePace;
     }
 
@@ -62,7 +64,7 @@ contract TokenLockMining {
         uint256 halfDate=startTime;
         uint256 releaseAmount;
         uint256 elapsedTime;
-        uint256 pseudoLastRelasePace = lastReleasePace;
+        uint256 pseudoLastRelasePace = lastReleasePace * DECIMAL_FACTOR;
         uint256 pseudoLastReleaseTime = lastReleaseTime;
         while (halfDate<_currentTime) {
             if (halfDate>pseudoLastReleaseTime){
@@ -75,6 +77,7 @@ contract TokenLockMining {
         }
         elapsedTime = _currentTime - pseudoLastReleaseTime;
         releaseAmount += elapsedTime/1 hours * pseudoLastRelasePace;
+        releaseAmount/=DECIMAL_FACTOR;
         return (releaseAmount, pseudoLastRelasePace);
     }
 // withdraw all relased token
