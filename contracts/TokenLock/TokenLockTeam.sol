@@ -12,6 +12,7 @@ contract TokenLockTeam {
 
     uint256 public startTime;  //set starting date when deploy the contract
     uint256 public releasedTotal;
+    uint256 public constant DECIMAL_FACTOR = 1000; // reserve 3 digits of decimals
     uint256 public constant ReleasePace = 8333333;  //monthly release pace
 
     uint256 public lastReleaseTime;
@@ -53,9 +54,9 @@ contract TokenLockTeam {
         uint256 elapsedTime;
 
         elapsedTime = _currentTime - lastReleaseTime;
-        releaseAmount += elapsedTime/30 days * ReleasePace; //release every 30 days
+        releaseAmount += elapsedTime/30 days * ReleasePace * DECIMAL_FACTOR; //release every 30 days
         lastReleaseTime = _currentTime;
-        return releaseAmount;
+        return releaseAmount/DECIMAL_FACTOR;
     }
 // withdraw all relased token
     function withdrawToken() external onlyManager {
