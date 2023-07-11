@@ -13,7 +13,7 @@ contract TokenLockTeam {
     uint256 public startTime;  //set starting date when deploy the contract
     uint256 public releasedTotal;
     uint256 public constant DECIMAL_FACTOR = 1000; // reserve 3 digits of decimals
-    uint256 public constant ReleasePace = 8333333;  //monthly release pace
+    uint256 public constant ReleasePace = 8333333 * 10**18;  //monthly release pace
 
     uint256 public lastReleaseTime;
 
