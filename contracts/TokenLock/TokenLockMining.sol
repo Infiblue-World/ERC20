@@ -14,7 +14,7 @@ contract TokenLockMining {
     uint256 public releasedTotal;
     uint256 public constant halfeIntervals = 730 days; //halves every 24 months
     uint256 public constant DECIMAL_FACTOR = 1000; // reserve 3 digits of decimals
-    uint256 public constant initialReleasePace = 1000;
+    uint256 public constant initialReleasePace = 1000 * 10**18;
 
     uint256 public lastReleasePace; 
     uint256 public lastReleaseTime;
